@@ -17,7 +17,73 @@ stored.
 5. Map the IP address with its MAC address and return the MAC address to client.
 P
 ## PROGRAM - ARP
+```
+server.py
+import socket
+
+s = socket.socket()
+s.bind(('localhost', 8000))
+s.listen(1)
+
+print("ARP Server Started...")
+c, addr = s.accept()
+print("Connected with:", addr)
+
+# IP Address and MAC Address table
+address = {
+    "165.165.80.80": "6A:08:AA:C2",
+    "165.165.79.1": "8A:BC:E3:FA",
+    "192.168.1.1": "AA:BB:CC:DD"
+}
+
+while True:
+    ip = c.recv(1024).decode()
+
+    if not ip:
+        break
+
+    print("Requested IP Address:", ip)
+
+    if ip in address:
+        mac = address[ip]
+        reply = "MAC Address for " + ip + " is " + mac
+    else:
+        reply = "IP Address Not Found"
+
+    c.send(reply.encode())
+
+c.close()
+s.close()
+
+client.py
+import socket
+
+s = socket.socket()
+s.connect(('localhost', 8000))
+
+print("Connected to ARP Server")
+
+while True:
+    ip = input("Enter IP Address : ")
+
+    if ip.lower() == "exit":
+        break
+
+    s.send(ip.encode())
+
+    result = s.recv(1024).decode()
+    print(result)
+
+s.close()
+```
 ## OUPUT - ARP
+SERVER
+<img width="1420" height="229" alt="image" src="https://github.com/user-attachments/assets/39727d74-94f7-470c-8a19-ac5f41accc79" />
+
+CLIENT
+<img width="1420" height="229" alt="image" src="https://github.com/user-attachments/assets/74f997e6-f3f0-409e-a0a8-3471d85c7bbe" />
+
+
 ## PROGRAM - RARP
 ## OUPUT -RARP
 ## RESULT
